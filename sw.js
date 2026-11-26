@@ -1,7 +1,9 @@
-/* OrthoKlas service worker.
+/* SakuIGD service worker.
    Kalau isi index.html diperbarui: cukup unggah index.html baru, pengguna otomatis dapat versi terbaru saat online.
    Kalau ikon/manifest diganti: naikkan angka VERSION di bawah ini. */
-const VERSION = 'sakuigd-v2';
+const VERSION = 'sakuigd-v3';
+// Hanya hapus cache milik aplikasi ini (aplikasi lain di domain github.io yang sama tidak terganggu).
+const APP = VERSION.replace(/v\d+$/, '');
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png',
                 './icon-maskable-512.png', './apple-touch-icon.png', './favicon-48.png'];
 
@@ -11,7 +13,7 @@ self.addEventListener('install', e => {
 
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys()
-    .then(keys => Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k))))
+    .then(keys => Promise.all(keys.filter(k => k !== VERSION && k.startsWith(APP)).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 
